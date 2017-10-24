@@ -6,7 +6,7 @@ public class Backpropagation {
 
     private double vystup;
     private int[] popisSiete = {3, 7, 6, 5, 1};
-    private List<Double> vystupy = new ArrayList<>();
+    private List<double[][]> vystupy = new ArrayList<>();
     private List<double[][]> vahy = new ArrayList<>();
 
     public void inicializuj() {
@@ -33,9 +33,21 @@ public class Backpropagation {
         vahy.add(Arrays.copyOf(W, W.length));
     }
 
-    public void spracujVstup(double x, double y) {
+    public void trenujVstup(double x, double y) {
         //TODO kod pre spracovanie jedneho vstupu z treningovej vzorky
-        
+        for (int j = 0; j < popisSiete.length; j++) {
+            vystupy.add(new double[1][popisSiete[j]]);
+        }
+       
+        double[][] vstup = new double[1][popisSiete[0]];
+        vstup[1][0] = x;
+        vstup[1][1] = y;
+        vstup[1][2] = -1;
+        vystupy.set(0,vstup);
+       
     }
-
+    
+        
+        
+    
 }
