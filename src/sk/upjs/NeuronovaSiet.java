@@ -5,11 +5,11 @@ import java.io.PrintWriter;
 
 
 public class NeuronovaSiet {
-
+    // funkcia, na ktoru trenujem siet
     public static double fxy(double x, double y) {
         return (x + (y * y)) / Math.sqrt(x + 1);
     }
-
+    //vypis do suboru
     public static void vypis(double[][] cvicnaVzorka) {
         PrintWriter pw = null;
 
@@ -30,8 +30,8 @@ public class NeuronovaSiet {
     }
 
     public static void main(String[] args) {
-
-        double[][] cvicnaVzorka = new double[3][121];
+        //generovanie cvicnej vzorky
+         double[][] cvicnaVzorka = new double[3][121];
 
         int pocitadlo = 0;
         while (pocitadlo < 11) {
@@ -44,6 +44,11 @@ public class NeuronovaSiet {
 
         }
         vypis(cvicnaVzorka);
+        
+        Backpropagation bp = new Backpropagation();
+        bp.inicializuj();
+        bp.trenujVstup(cvicnaVzorka[0][25], cvicnaVzorka[1][25]);
+        System.out.println("ocakavany vystup: " + cvicnaVzorka[2][25]);
     }
 
 }
