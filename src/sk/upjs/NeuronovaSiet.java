@@ -6,10 +6,8 @@ import java.io.PrintWriter;
 
 public class NeuronovaSiet {
     // funkcia, na ktoru trenujem siet
-    public static double fxy(double x, double y) {
-        return (x + (y * y)) / Math.sqrt(x + 1);
-    }
-    //vypis do suboru
+    
+    //vypis  treningovej vzorky do suboru
     public static void vypis(double[][] cvicnaVzorka) {
         PrintWriter pw = null;
 
@@ -38,7 +36,7 @@ public class NeuronovaSiet {
             for (int i = 0; i < 11; i++) {
                 cvicnaVzorka[0][i + 11 * pocitadlo] = 0.2 * pocitadlo;
                 cvicnaVzorka[1][i + 11 * pocitadlo] = 0.2 * i;
-                cvicnaVzorka[2][i + 11 * pocitadlo] = fxy(0.2 * pocitadlo, 0.2 * i);
+                cvicnaVzorka[2][i + 11 * pocitadlo] = Funkcie.fxy(0.2 * pocitadlo, 0.2 * i);
             }
             pocitadlo++;
 
