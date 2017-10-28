@@ -45,8 +45,12 @@ public class NeuronovaSiet {
         
         Backpropagation bp = new Backpropagation();
         bp.inicializuj();
-        bp.trenujVstup(cvicnaVzorka[0][25], cvicnaVzorka[1][25]);
-        System.out.println("ocakavany vystup: " + cvicnaVzorka[2][25]);
+        for (int i = 0; i < cvicnaVzorka[0].length; i++) {
+             bp.trenujVstup(cvicnaVzorka[0][i], cvicnaVzorka[1][i], cvicnaVzorka[2][i]);
+             System.out.println("ocakavany vystup: " + cvicnaVzorka[2][i]);
+    }
+            
+  
     }
 
 }

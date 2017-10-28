@@ -4,7 +4,10 @@ import java.util.*;
 
 public class Backpropagation {
     
-    private int[] popisSiete = {3, 7, 6, 5, 1};
+    private List<Double> chyba = new ArrayList<>();
+    private int[] popisSiete = {3, 12, 22, 15, 1};
+    private double uciaciPomer = 0.05;
+    
     private double himVystup;
     private List<double[][]> himVystupy = new ArrayList<>();
     private double vystup;
@@ -37,7 +40,7 @@ public class Backpropagation {
         vahy.add(Arrays.copyOf(W, W.length));
     }
     
-    public void trenujVstup(double x, double y) {
+    public void trenujVstup(double x, double y, double ocakavanyVysledok) {
         // kod pre spracovanie jedneho vstupu z treningovej vzorky
         
         double[][] vstup = new double[1][popisSiete[0]];
@@ -68,8 +71,15 @@ public class Backpropagation {
             }
         }
         vystup = Funkcie.aktivacna(himVystup);
+        chyba.add(Math.abs(ocakavanyVysledok-vystup));
         
-        System.out.println("vystup na sieti: " + himVystup);
+        
+        System.out.println("vystup na sieti: " + vystup);
+        System.out.println("chyba: " + chyba.get(chyba.size()-1));
+        
+        vypocitajDelty(ocakavanyVysledok);
+        nastavVahy();
+        
         
     }
     
@@ -88,18 +98,18 @@ public class Backpropagation {
             aktualne[0][i] = Funkcie.aktivacnaDerivovana(him[i]) * (sumar);
         }
         delty.add(aktualne);
-        for (int k = popisSiete.length - 3; k >= 0; k++) {
+        for (int k = popisSiete.length - 3; k >= 0; k--) {
             aktualne = new double[1][popisSiete[k]];
             him = himVystupy.get(k)[0];
             
             wm = vahy.get(k);
             deltaMPlusJeden = delty.get(delty.size() - 1)[0];
             
-            for (int i = 0; i < aktualne.length; i++) {
+            for (int i = 0; i < aktualne[0].length; i++) {
                 sumar = 0;                
                 
-                for (int j = 0; j < wm.length; j++) {
-                    sumar = sumar + deltaMPlusJeden[j] * wm[j][i];
+                for (int j = 0; j < wm[0].length; j++) {
+                    sumar = sumar + deltaMPlusJeden[j] * wm[i][j];
                 }
                 aktualne[0][i] = Funkcie.aktivacnaDerivovana(him[i]) * sumar;
             }
@@ -109,4 +119,25 @@ public class Backpropagation {
         Collections.reverse(delty);
     }
     
+    public void nastavVahy(){
+        double[][] aktualne = vahy.get(vahy.size()-1);
+        double[] vystupy = this.vystupy.get(this.vystupy.size()-1)[0];
+        double [] delty;
+        for (int i = 0; i < aktualne.length; i++) {
+            aktualne[i][0] = aktualne [i][0] + (uciaciPomer * delta * vystupy[i]);
+        }
+        for (int k = popisSiete.length - 3; k >= 0; k--) {
+            aktualne = vahy.get(k);
+            vystupy = this.vystupy.get(k)[0];
+            delty = this.delty.get(k+1)[0];
+            
+            for (int i = 0; i < aktualne.length; i++) {
+                for (int j = 0; j < aktualne[0].length; j++) {
+                    aktualne[i][j] = aktualne[i][j]+(uciaciPomer*delty[j]*vystupy[i]);
+                }
+                
+            }
+            
+        }
+    }
 }
