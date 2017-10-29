@@ -29,4 +29,25 @@ public class Matica {
                     c[i][j] += a[i][k] * b[k][j];
         return c;
     }
+    
+      // return c = a + b
+    public static double[][] add(double[][] a, double[][] b) {
+        int m = a.length;
+        int n = a[0].length;
+        double[][] c = new double[m][n];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                c[i][j] = a[i][j] + b[i][j];
+        return c;
+    }
+    //return c = x*a
+    public static double[][] multiplyByConstant(double[][] a, double x){
+        int m = a.length;
+        int n = a[0].length;
+        double[][] c = new double[m][n];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                c[i][j] = a[i][j] * x;
+        return c;
+    }
 }
