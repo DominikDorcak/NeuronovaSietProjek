@@ -5,6 +5,14 @@ import java.util.*;
 public class Backpropagation {
 
     private List<Double> chyba = new ArrayList<>();
+
+    public List<Double> getChyba() {
+        return chyba;
+    }
+
+    public void setChyba(List<Double> chyba) {
+        this.chyba = chyba;
+    }
     private int[] popisSiete = {3, 12, 22, 15, 1};
     private double uciaciPomer = 0.05;
 
@@ -41,15 +49,25 @@ public class Backpropagation {
     }
 
     public void trenujVstup(double x, double y, double ocakavanyVysledok) {
-        // kod pre spracovanie jedneho vstupu z treningovej vzorky
+        VypocitajVystup(x, y);
+        chyba.add(vystup-ocakavanyVysledok);
 
+        //System.out.println("vystup na sieti: " + vystup);
+        vypocitajDelty(ocakavanyVysledok);
+        nastavVahyCezMatice();
+
+    }
+
+    public void VypocitajVystup(double x, double y) {
+        // kod pre spracovanie jedneho vstupu z treningovej vzorky
+        
         double[][] vstup = new double[1][popisSiete[0]];
         vstup[0][0] = x;
         vstup[0][1] = y;
         vstup[0][2] = -1;
         himVystupy.add(vstup);
 
-        System.out.println("vstup: " + Arrays.toString(vstup[0]));
+        //System.out.println("vstup: " + Arrays.toString(vstup[0]));
 
         for (int i = 0; i < popisSiete.length - 2; i++) {
             double[][] pole = new double[1][popisSiete[i + 1] - 1];
@@ -72,14 +90,6 @@ public class Backpropagation {
             vystupy.set(j, d);
         }
         vystup = Funkcie.aktivacna(himVystup);
-        chyba.add(Math.abs(ocakavanyVysledok - vystup));
-
-        System.out.println("vystup na sieti: " + vystup);
-        System.out.println("chyba: " + chyba.get(chyba.size() - 1));
-
-        vypocitajDelty(ocakavanyVysledok);
-        nastavVahyCezMatice();
-
     }
 
     public void vypocitajDelty(double ocakavanyVysledok) {
@@ -118,27 +128,7 @@ public class Backpropagation {
         Collections.reverse(delty);
     }
 
-    public void nastavVahy() {
-        double[][] aktualne = vahy.get(vahy.size() - 1);
-        double[] vystupy = this.vystupy.get(this.vystupy.size() - 1)[0];
-        double[] delty;
-        for (int i = 0; i < aktualne.length; i++) {
-            aktualne[i][0] = aktualne[i][0] + (uciaciPomer * delta * vystupy[i]);
-        }
-        for (int k = popisSiete.length - 3; k >= 0; k--) {
-            aktualne = vahy.get(k);
-            vystupy = this.vystupy.get(k)[0];
-            delty = this.delty.get(k + 1)[0];
-
-            for (int i = 0; i < aktualne.length; i++) {
-                for (int j = 0; j < aktualne[0].length; j++) {
-                    aktualne[i][j] = aktualne[i][j] + (uciaciPomer * delty[j] * vystupy[i]);
-                }
-
-            }
-
-        }
-    }
+    
 
     public void nastavVahyCezMatice() {
         double[][] aktualne = vahy.get(vahy.size() - 1);

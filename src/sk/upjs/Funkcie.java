@@ -20,6 +20,6 @@ public class Funkcie {
     }
     
     public static double aktivacnaDerivovana(double x){
-        return 1/(Math.cosh(x) * Math.cosh(x));
+        return 1-(Math.tanh(x)*Math.tanh(x));
     }
 }
