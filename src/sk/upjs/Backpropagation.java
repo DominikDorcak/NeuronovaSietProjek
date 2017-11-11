@@ -30,13 +30,13 @@ public class Backpropagation {
 
 
     public void inicializuj() {
-        //inicializacia vah na nahodne hodnoty mensie ako 0.5
+        //inicializacia vah
         double[][] W;
         for (int i = 0; i < popisSiete.length - 2; i++) {
             W = new double[popisSiete[i]][popisSiete[i + 1] - 1];
             for (int j = 0; j < W.length; j++) {
                 for (int k = 0; k < W[j].length; k++) {
-                    W[j][k] = Math.random() * 0.5;
+                    W[j][k] =0.02*j*i +0.01*k;
                 }
 
             }
@@ -47,7 +47,7 @@ public class Backpropagation {
         W = new double[popisSiete[popisSiete.length - 2]][popisSiete[popisSiete.length - 1]];
         for (int j = 0; j < W.length; j++) {
             for (int k = 0; k < W[j].length; k++) {
-                W[j][k] = Math.random() * 0.5;
+                W[j][k] = 0.025*j + 0.03*k;
             }
         }
         vahy.add(Arrays.copyOf(W, W.length));
@@ -88,7 +88,7 @@ public class Backpropagation {
         
         //vystupy him funkcie prezeniem aktivacnou funkciou pre zisaknie vystupov(vstupna vrstva zostava)
         vystupy = himVystupy.subList(0, himVystupy.size());
-        for (int j = 0; j < vystupy.size(); j++) {
+        for (int j = 1; j < vystupy.size(); j++) {
             double[][] d = vystupy.get(j);
             for (int i = 0; i < d[0].length - 1; i++) {
                 d[0][i] = Funkcie.aktivacna(himVystupy.get(j)[0][i]);

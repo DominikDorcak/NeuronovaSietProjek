@@ -50,7 +50,7 @@ public class NeuronovaSiet {
         //trenovanie siete
         Backpropagation bp = new Backpropagation();
         bp.inicializuj();
-        for (int k = 0; k < 100; k++) {
+        for (int k = 0; k < 10; k++) {
 
             for (int i = 0; i < cvicnaVzorka[0].length; i++) {
                 bp.trenujVstup(cvicnaVzorka[0][i], cvicnaVzorka[1][i], cvicnaVzorka[2][i]);
