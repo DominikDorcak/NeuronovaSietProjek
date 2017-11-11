@@ -6,6 +6,7 @@ public class Backpropagation {
 
     private List<Double> chyba = new ArrayList<>();
 
+
     public List<Double> getChyba() {
         return chyba;
     }
@@ -13,16 +14,16 @@ public class Backpropagation {
     public void setChyba(List<Double> chyba) {
         this.chyba = chyba;
     }
-    private int[] popisSiete = {3, 12, 22, 15, 1};
-    private double uciaciPomer = 0.05;
+    private int[] popisSiete = {3, 7, 6, 5, 1};
+    private double uciaciPomer = 0.1;
 
     private double himVystup;
-    private List<double[][]> himVystupy = new ArrayList<>();
+    private List<double[][]> himVystupy;
     private double vystup;
-    private List<double[][]> vystupy = new ArrayList<>();
+    private List<double[][]> vystupy ;
     private List<double[][]> vahy = new ArrayList<>();
     private double delta;
-    private List<double[][]> delty = new ArrayList<>();
+    private List<double[][]> delty ;
 
     public void inicializuj() {
         //inicializacia vah
@@ -59,8 +60,11 @@ public class Backpropagation {
     }
 
     public void VypocitajVystup(double x, double y) {
+
         // kod pre spracovanie jedneho vstupu z treningovej vzorky
-        
+        himVystupy = new ArrayList<>();
+        vystupy = new ArrayList<>();
+
         double[][] vstup = new double[1][popisSiete[0]];
         vstup[0][0] = x;
         vstup[0][1] = y;
@@ -93,24 +97,27 @@ public class Backpropagation {
     }
 
     public void vypocitajDelty(double ocakavanyVysledok) {
-
+        delty = new ArrayList<>();
         delta = Funkcie.aktivacnaDerivovana(himVystup) * (ocakavanyVysledok - vystup);
 
-        double[][] aktualne = new double[1][popisSiete[popisSiete.length - 2] - 1];
+        double[][] aktualne = new double[1][popisSiete[popisSiete.length - 2]-1];
         double[] him = himVystupy.get(himVystupy.size() - 1)[0];
         double sumar = 0;
         double[][] wm = vahy.get(vahy.size() - 1);
         double[] deltaMPlusJeden;
-
-        for (int i = 0; i < aktualne.length; i++) {
+    // z vystupnej na poslednu skrytu vrstvu
+        for (int j=0 ; j< aktualne.length; j++) {
+        for (int i = 0; i < wm.length; i++) {
             sumar = wm[i][0] * delta;
-            aktualne[0][i] = Funkcie.aktivacnaDerivovana(him[i]) * (sumar);
+        }
+            aktualne[0][j] = Funkcie.aktivacnaDerivovana(him[j]) * (sumar);
         }
         delty.add(aktualne);
-        for (int k = popisSiete.length - 3; k >= 0; k--) {
-            aktualne = new double[1][popisSiete[k] - 1];
-            him = himVystupy.get(k)[0];
 
+       //ostatne vrstvy
+        for (int k = popisSiete.length - 3; k >= 0; k--) {
+            aktualne = new double[1][popisSiete[k]-1];
+            him = himVystupy.get(k)[0];
             wm = vahy.get(k);
             deltaMPlusJeden = delty.get(delty.size() - 1)[0];
 

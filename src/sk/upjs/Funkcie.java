@@ -12,7 +12,7 @@ package sk.upjs;
 public class Funkcie {
     
     public static double fxy(double x, double y) {
-        return (x + (y * y)) / Math.sqrt(x + 1);
+        return ((x + (y * y)) / Math.sqrt(x + 1))/4;
     }
     
     public static double aktivacna(double x){
