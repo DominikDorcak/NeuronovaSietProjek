@@ -1,9 +1,11 @@
 package sk.upjs;
-
+/*
+Spustiteľná trieda s generovaním tréningovej zložky a požiadavkami na trénovanie
+ */
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import jdk.nashorn.internal.objects.NativeArray;
+
 
 public class NeuronovaSiet {
    
@@ -28,6 +30,8 @@ public class NeuronovaSiet {
         }
     }
 
+
+
     public static void main(String[] args) {
         //generovanie cvicnej vzorky
         double[][] cvicnaVzorka = new double[3][121];
@@ -43,37 +47,28 @@ public class NeuronovaSiet {
 
         }
         vypis(cvicnaVzorka);
-
+        //trenovanie siete
         Backpropagation bp = new Backpropagation();
         bp.inicializuj();
-        for (int k = 0; k < 10; k++) {
+        for (int k = 0; k < 100; k++) {
 
             for (int i = 0; i < cvicnaVzorka[0].length; i++) {
                 bp.trenujVstup(cvicnaVzorka[0][i], cvicnaVzorka[1][i], cvicnaVzorka[2][i]);
-                //System.out.println("ocakavany vystup: " + cvicnaVzorka[2][i]);
+
             }
-double chyba = 0;
+
+            //vypocet chybovej funkcie
+            double chyba = 0;
             for (Double d : bp.getChyba()) {
-                chyba = chyba+(d*d*0.5);
-                
+                chyba = chyba + (d * d * 0.5);
+
             }
-            System.out.println("chyba: " + chyba/cvicnaVzorka[0].length);
+            System.out.println("iteracia: " + k + ", chyba: " + chyba/cvicnaVzorka[0].length);
+            // po natrenovani siete na celej cvicnej vzorke list s chybami vyprazdnim
             bp.setChyba(new ArrayList<>());
-            
-            
-     
+
+
         }
-        double[][] matica1 = new double[1][4];
-        matica1[0][0] = 1;
-        matica1[0][1] = 1;
-        matica1[0][2] = 1;
-        matica1[0][3] = 1;
-        double[][] matica2 = new double[4][1];
-        matica2[0][0] = 1;
-        matica2[1][0] = 1;
-        matica2[2][0] = 1;
-        matica2[3][0] = 1;
-        double[][] matica3 = Matica.multiply(matica1,matica2);
 
 
     }

@@ -1,14 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package sk.upjs;
 
-/**
- *
- * @author domin
- */
+package sk.upjs;
+// pomocná trieda obsahujúca používané funkcie
+
 public class Funkcie {
     
     public static double fxy(double x, double y) {

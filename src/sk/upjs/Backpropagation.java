@@ -1,11 +1,13 @@
 package sk.upjs;
+/* Trieda implementuje viacvrstvovú doprednú neurónovú sieť vo forme zoznamu váh prepojení
+   a topológie siete pre aproximáciu funkcie s dvojrozmerným vstupom a jednorozmerným výtupom
+ */
 
 import java.util.*;
 
 public class Backpropagation {
-
+    //odchylky od ocakavanych vystupov vkladam do Listu
     private List<Double> chyba = new ArrayList<>();
-
 
     public List<Double> getChyba() {
         return chyba;
@@ -14,19 +16,21 @@ public class Backpropagation {
     public void setChyba(List<Double> chyba) {
         this.chyba = chyba;
     }
-    private int[] popisSiete = {3, 7, 6, 5, 1};
-    private double uciaciPomer = 0.1;
 
-    private double himVystup;
-    private List<double[][]> himVystupy;
-    private double vystup;
-    private List<double[][]> vystupy ;
-    private List<double[][]> vahy = new ArrayList<>();
-    private double delta;
-    private List<double[][]> delty ;
+    private int[] popisSiete = {3, 17, 11, 5, 1};//topologia siete
+    private double uciaciPomer = 0.05;
+
+    private double himVystup;// vysledok funkcie him na vystupnom neurone
+    private List<double[][]> himVystupy;// ostatne vysledky him
+    private double vystup;//vystup na sieti
+    private List<double[][]> vystupy;// vystupy ostatnych neuronov
+    private List<double[][]> vahy = new ArrayList<>();//zoznam vsetkych vah
+    private double delta;//delta na poslednom neurone
+    private List<double[][]> delty;//delty ostatnych neuronov
+
 
     public void inicializuj() {
-        //inicializacia vah
+        //inicializacia vah na nahodne hodnoty mensie ako 0.5
         double[][] W;
         for (int i = 0; i < popisSiete.length - 2; i++) {
             W = new double[popisSiete[i]][popisSiete[i + 1] - 1];
@@ -48,31 +52,28 @@ public class Backpropagation {
         }
         vahy.add(Arrays.copyOf(W, W.length));
     }
-
+    //Trenovanie jedneho vstupu
     public void trenujVstup(double x, double y, double ocakavanyVysledok) {
         VypocitajVystup(x, y);
-        chyba.add(vystup-ocakavanyVysledok);
-
-        //System.out.println("vystup na sieti: " + vystup);
+        chyba.add(vystup - ocakavanyVysledok);
         vypocitajDelty(ocakavanyVysledok);
         nastavVahyCezMatice();
 
     }
 
+    //Vypocet vystupu siete pre dany vstup
     public void VypocitajVystup(double x, double y) {
-
-        // kod pre spracovanie jedneho vstupu z treningovej vzorky
         himVystupy = new ArrayList<>();
         vystupy = new ArrayList<>();
-
-        double[][] vstup = new double[1][popisSiete[0]];
+        //najprv pocitam hodnoty funkcie him pre vsetky neurony(okrem vstupnej vrstvy)
+        //na vstupnu vrstvu nahodim vstup
+        double[][] vstup = new double[1][3];
         vstup[0][0] = x;
         vstup[0][1] = y;
         vstup[0][2] = -1;
         himVystupy.add(vstup);
 
-        //System.out.println("vstup: " + Arrays.toString(vstup[0]));
-
+        // ostatne vrstvy riesim pomocou nasobenia maticou vah
         for (int i = 0; i < popisSiete.length - 2; i++) {
             double[][] pole = new double[1][popisSiete[i + 1] - 1];
             pole = Matica.multiply(himVystupy.get(i), vahy.get(i));
@@ -82,8 +83,10 @@ public class Backpropagation {
             pole2[0] = pole3;
             himVystupy.add(Arrays.copyOf(pole2, pole2.length));
         }
+        //a na koniec vystupna vrstva
         himVystup = Matica.multiply(himVystupy.get(popisSiete.length - 2), vahy.get(popisSiete.length - 2))[0][0];
-
+        
+        //vystupy him funkcie prezeniem aktivacnou funkciou pre zisaknie vystupov(vstupna vrstva zostava)
         vystupy = himVystupy.subList(0, himVystupy.size());
         for (int j = 0; j < vystupy.size(); j++) {
             double[][] d = vystupy.get(j);
@@ -95,28 +98,30 @@ public class Backpropagation {
         }
         vystup = Funkcie.aktivacna(himVystup);
     }
-
+    
+    //Spatna propagacia chyby
     public void vypocitajDelty(double ocakavanyVysledok) {
-        delty = new ArrayList<>();
+        delty = new ArrayList<>();//inicializujem delty
+        //vypocet delty na vystupe
         delta = Funkcie.aktivacnaDerivovana(himVystup) * (ocakavanyVysledok - vystup);
 
-        double[][] aktualne = new double[1][popisSiete[popisSiete.length - 2]-1];
+        double[][] aktualne = new double[1][popisSiete[popisSiete.length - 2] - 1];
         double[] him = himVystupy.get(himVystupy.size() - 1)[0];
         double sumar = 0;
         double[][] wm = vahy.get(vahy.size() - 1);
         double[] deltaMPlusJeden;
-    // z vystupnej na poslednu skrytu vrstvu
-        for (int j=0 ; j< aktualne.length; j++) {
-        for (int i = 0; i < wm.length; i++) {
-            sumar = wm[i][0] * delta;
-        }
+        // z vystupnej na poslednu skrytu vrstvu
+        for (int j = 0; j < aktualne.length; j++) {
+            for (int i = 0; i < wm.length; i++) {
+                sumar = wm[i][0] * delta;
+            }
             aktualne[0][j] = Funkcie.aktivacnaDerivovana(him[j]) * (sumar);
         }
         delty.add(aktualne);
 
-       //ostatne vrstvy
+        //ostatne vrstvy
         for (int k = popisSiete.length - 3; k >= 0; k--) {
-            aktualne = new double[1][popisSiete[k]-1];
+            aktualne = new double[1][popisSiete[k] - 1];
             him = himVystupy.get(k)[0];
             wm = vahy.get(k);
             deltaMPlusJeden = delty.get(delty.size() - 1)[0];
@@ -131,34 +136,35 @@ public class Backpropagation {
             }
             delty.add(aktualne);
         }
-
+        //delty ukladam od zadu preto na koniec otocim poradie
         Collections.reverse(delty);
     }
 
-    
-
+    //Nastavenie novych vah pomocou operacii s maticami
     public void nastavVahyCezMatice() {
-        double[][] aktualne = vahy.get(vahy.size() - 1);
+        double[][] stareVahy = vahy.get(vahy.size() - 1);
         double[][] vystupy = this.vystupy.get(this.vystupy.size() - 1);
         double[][] delty;
         double[][] noveVahy;
 
-        for (int i = 0; i < aktualne.length; i++) {
-            aktualne[i][0] = aktualne[i][0] + (uciaciPomer * delta * vystupy[0][i]);
+        for (int i = 0; i < stareVahy.length; i++) {
+            stareVahy[i][0] = stareVahy[i][0] + (uciaciPomer * delta * vystupy[0][i]);
         }
-        vahy.set(vahy.size() - 1, aktualne);
+        vahy.set(vahy.size() - 1, stareVahy);
 
         for (int k = popisSiete.length - 3; k >= 0; k--) {
-            aktualne = vahy.get(k);
+            stareVahy = vahy.get(k);
             vystupy = Matica.transpose(this.vystupy.get(k));
             delty = this.delty.get(k + 1);
-            double [][] a = Matica.multiply(vystupy,delty);
+            double[][] a = Matica.multiply(vystupy, delty);
             noveVahy = Matica.multiplyByConstant(a, uciaciPomer);
 
-            aktualne = Matica.add(aktualne, noveVahy);
+            stareVahy = Matica.add(stareVahy, noveVahy);
 
-            vahy.set(k, aktualne);
+            vahy.set(k, stareVahy);
 
         }
     }
+
+
 }

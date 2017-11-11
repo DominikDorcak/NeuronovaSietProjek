@@ -1,6 +1,6 @@
 
 package sk.upjs;
-
+//pomocna trieda pre výpočty s maticami
 //zdroj https://introcs.cs.princeton.edu/java/22library/Matrix.java.html
 public class Matica {
     
