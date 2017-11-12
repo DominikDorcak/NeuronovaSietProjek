@@ -62,7 +62,7 @@ public class Backpropagation {
     }
 
     //Vypocet vystupu siete pre dany vstup
-    public void VypocitajVystup(double x, double y) {
+    public double VypocitajVystup(double x, double y) {
         himVystupy = new ArrayList<>();
         vystupy = new ArrayList<>();
         //najprv pocitam hodnoty funkcie him pre vsetky neurony(okrem vstupnej vrstvy)
@@ -97,6 +97,7 @@ public class Backpropagation {
             vystupy.set(j, d);
         }
         vystup = Funkcie.aktivacna(himVystup);
+        return vystup;
     }
     
     //Spatna propagacia chyby
